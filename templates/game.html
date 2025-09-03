@@ -140,7 +140,7 @@
 <script>
     // Initialiser les icônes Lucide
     lucide.createIcons();
-    
+
     // Variables de jeu
     const gameMode = '{{ mode }}';
     const difficulty = '{{ difficulty }}';
@@ -149,10 +149,23 @@
         area: '', 
         location: ''
     };
-    
+
     // Charger la première image
-    window.addEventListener('DOMContentLoaded', function() {
-        loadNewImage();
+//    window.addEventListener('DOMContentLoaded', function() {
+//        loadNewImage();
+//    });
+</script>
+<script type="module">
+    import {loadImageFromJson} from "{{ url_for('static', filename='js/image-loader.js') }}";
+
+    let image_url = "{{ mode }}"=="daily" ? "/api/daily-image" : "/api/new-image?difficulty={{ difficulty }}";
+
+    window.addEventListener("DOMContentLoaded", () => {
+        loadImageFromJson(image_url, "#game-image", "url");
+        const loading = document.getElementById("loading-spinner");
+        const img = document.getElementById("image-display");
+        loading.classList.toggle("hidden");
+        img.classList.toggle("hidden");
     });
 </script>
 {% endblock %}

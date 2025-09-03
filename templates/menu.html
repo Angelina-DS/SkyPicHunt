@@ -1,2 +1,55 @@
 {% extends "base.html" %}
 
+{% block content %}
+<section class="center-column">
+    <div class="class=flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 text-gray-200">
+        <h1 class="font-semibold text-center">Solve the daily picture hunt!</h1>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-8">
+        <!-- Zone d'affichage de l'image -->
+        <div id="image-container" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+            <div id="loading-spinner" class="text-center text-white">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                <p>Image is loading...</p>
+            </div>
+            <!-- src="{\{ url_for('get_new_image,error') }}" -->
+            <div id="image-display" class="hidden">
+                <img id="game-image" class="w-full max-w-2xl h-auto rounded-xl shadow-2xl mb-6" alt="Image à deviner">
+
+            </div>
+        </div>
+    </div>
+    <div class="center-column flex justify-center">
+        <div class="button-column flex flex-col justify-center">
+            <button
+                class="game-btn flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 hover:bg-white/10 text-gray-200 text-center"
+                onclick="location.href='{{url_for('game', mode='daily') }}'"
+            >
+                <span class="font-semibold text-center">Daily picture</span>
+            </button>
+            <button
+                class="game-btn flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 hover:bg-white/10 text-gray-200 text-center"
+                onclick="location.href='{{url_for('game', mode='hunt') }}'"
+            >
+                <span class="font-semibold text-center">Random</span>
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="module">
+    import {loadImageFromJson} from "{{ url_for('static', filename='js/image-loader.js') }}";
+
+    let image_url = "/api/daily-image";
+
+    window.addEventListener("DOMContentLoaded", () => {
+        loadImageFromJson(image_url, "#game-image", "url");
+        const loading = document.getElementById("loading-spinner");
+        const img = document.getElementById("image-display");
+        loading.classList.toggle("hidden");
+        img.classList.toggle("hidden");
+    });
+</script>
+{% endblock %}

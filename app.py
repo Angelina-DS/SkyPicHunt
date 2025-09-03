@@ -41,8 +41,7 @@ def menu():
 @app.route('/game')
 @app.route('/game/')
 def redirect_game():
-#    print("redirecting")
-    return redirect(url_for("game", mode="easy"))
+    return redirect(url_for("game", mode="random"))
 
 # Get /game/<mode>?difficulty=
 @app.route('/game/<mode>')
@@ -50,7 +49,10 @@ def game(mode):
     """Main game interface"""
     # Get difficulty via the query string, default = "easy"
     difficulty = request.args.get('difficulty', 'easy')
-    
+
+    mode = mode if mode in ["daily", "hunt"] else "hunt"
+    difficulty = difficulty if difficulty in ["easy", "medium", "hard"] else "easy"
+
     # Initialisation/Actualisation of the game session (mode, difficulty, score)
     session['game_mode'] = mode
     session['difficulty'] = difficulty
@@ -104,7 +106,7 @@ def get_new_image():
             },
             {
                 'id': 3,
-                'image': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop',
+                'url': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop',
                 'realm': 'Hidden Forest',
                 'area': 'Forest Clearing',
                 'location': 'Plain before the First Gate',
@@ -129,7 +131,7 @@ def get_new_image():
 def get_daily_image():
     """Return the daily picture, store it in the session"""
     today = date.today()
-    
+
     # Prod case : daily picture is picked in Supabase
     if db_manager:
         image_data = db_manager.get_daily_image(today)
