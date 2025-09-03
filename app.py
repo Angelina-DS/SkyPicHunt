@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session
 import os
-from datetime import datetime
+from datetime import datetime, date
 import random
 from models.locations import locations # Locations list
 from models.game import GameLogic # Scoring logic
@@ -18,7 +18,13 @@ app.config['SUPABASE_KEY'] = config.APIkey # os.getenv('APIkey')
 
 # --- "Managers" initialisation ---
 # Creating Database manager only if SUPABASE_URL is defined
-db_manager = SupabaseManager() if app.config['SUPABASE_URL'] else None
+try :
+    db_manager = SupabaseManager()
+    print("Supabase successfully connected")
+except Exception as e :
+    print(f"Supabase error : {e}")
+    db_manager = None
+    
 # Points calculation logic
 game_logic = GameLogic()
 
@@ -62,6 +68,13 @@ def get_new_image():
     if db_manager:
         # We request an image adapted to the difficulty
         image_data = db_manager.get_random_image(difficulty)
+
+        # If no image exist for the selected difficulty
+        if not image_data:
+            return jsonify({
+                'error': f'No image found for the difficulty {difficulty}'
+            }), 404
+
     # Dev case : else
     else:
         # We use this hard coded sample list of images as an instance
@@ -81,6 +94,14 @@ def get_new_image():
                 'area': 'Butterfly Fields',
                 'location': '',
                 'difficulty': 'medium'
+            },
+            {
+                'id': 3,
+                'image': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop',
+                'realm': 'Hidden Forest',
+                'area': 'Forest Clearing',
+                'location': 'Plain before the First Gate',
+                'difficulty': 'hard'
             }
         ]
         # Sub-list of images filtered to match the current difficulty
@@ -92,6 +113,45 @@ def get_new_image():
     session['current_image'] = image_data
     
     # Return the image on the frontend (JSON)
+    return jsonify(image_data)
+
+# --- JSON API : daily picture ---
+
+# Get /api/daily-image
+@app.route('/api/daily-image')
+def get_daily_image():
+    """Return the daily picture, store it in the session"""
+    today = date.today()
+    
+    # Prod case : daily picture is picked in Supabase
+    if db_manager:
+        image_data = db_manager.get_daily_image(today)
+
+        # If no daily image is found
+        if not image_data:
+            return jsonify({
+                'error': 'No avalaible daily picture'
+            }), 404
+
+    # Dev case : daily picture is chosen putting a seed on the current date and with a sample list
+    else:
+        random.seed(today.toordinal())
+        sample_images = [
+            {
+                'id': 1,
+                'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+                'realm': 'Isle of Dawn',
+                'area': 'Main Isle',
+                'location': 'Mural Cave',
+                'difficulty': 'medium'
+            }
+        ]
+        image_data = random.choice(sample_images)
+        random.seed()  # Reinitialisation of the seed
+    
+    # Storing the daily picture in the current session
+    session['current_image'] = image_data
+    # Return the daily picture in the frontend
     return jsonify(image_data)
 
 # --- JSON API : check the players' answer ---
@@ -147,38 +207,6 @@ def check_answer():
     # Return the detailed answer in the frontend
     return jsonify(response)
 
-# --- JSON API : daily picture ---
-
-# Get /api/daily-image
-@app.route('/api/daily-image')
-def get_daily_image():
-    """Return the daily picture, store it in the session"""
-    today = datetime.now().date()
-    
-    # Prod case : daily picture is picked in Supabase
-    if db_manager:
-        image_data = db_manager.get_daily_image(today)
-    # Dev case : daily picture is chosen putting a seed on the current date and with a sample list
-    else:
-        random.seed(today.toordinal())
-        sample_images = [
-            {
-                'id': 1,
-                'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
-                'realm': 'Isle of Dawn',
-                'area': 'Main Isle',
-                'location': 'Mural Cave',
-                'difficulty': 'medium'
-            }
-        ]
-        image_data = random.choice(sample_images)
-        random.seed()  # Reinitialisation of the seed
-    
-    # Storing the daily picture in the current session
-    session['current_image'] = image_data
-    # Return the daily picture in the frontend
-    return jsonify(image_data)
-
 # --- JSON API : avalaible locations list ---
 
 # Get /api/locations
@@ -201,4 +229,4 @@ def reset_score():
 
 if __name__ == '__main__':
     # debug=True -> only on dev, automatic reloading and detailed tracebacks
-    app.run(debug=True)
+    app.run(debug=True) # , host='0.0.0.0', port=int(os.getenv('PORT', 5000))

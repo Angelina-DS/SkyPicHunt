@@ -107,7 +107,7 @@ class GameLogic:
         
         return settings.get(difficulty, settings['easy'])
     
-    def get_random_location_with_details(self, difficulty='easy'):
+    def get_random_location_with_details(self, difficulty='easy'): # TO ADAPT
         """
         Select a random location with all its details according to the difficulty.
         
