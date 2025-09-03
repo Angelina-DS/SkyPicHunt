@@ -1,6 +1,6 @@
 # Sky Picture Hunt
 
-***Sky Picture Hunt*** is a game about geolocalisation, inspired by Geoguessr, adapted to the universe of <u>*Sky : Children of Light*</u>. <br>
+***Sky Picture Hunt*** is a game about geolocalisation, inspired by Geoguessr, adapted to the universe of *Sky : Children of Light*. <br>
 Players have to guess the  location of given screens in the world of Sky. <br>
 In order to do so, they can navigate through the menu on the left of the screen to select the name of a realm, of an area and/or of a location where they think the image belongs. <br>
 
@@ -15,44 +15,46 @@ The points are based on the precision of the guesses : <br>
 
 # Structure of the project
 
-pichunt_project/ <br>
-|- app.py               # Flask application <br>
-|- config.py            # Configuration File for important variables and parameters values <br>
-|- requirements.txt     # Python dependencies for packages <br>
-|- .gitignore           # Files to ignore by Git when pushing <br>
-|- README.md            # The documentation of the project <br>
-| <br>
-|- models/              # Main logic and datas <br>
-    |- __init__.py      # To make the folder a Python package <br>
-    |- game.py          # Game logic (scoring, ...) <br>
-    |- locations.py     # Sky locations dictionnary <br>
-| <br>
-|- routes/              # Website's routes and endpoints <br>
-    |- __init__.py      # To make the folder a Python package <br>
-    |- main.py          # Principal routes (pages) <br>
-    |- api.py           # API REST Endpoints <br>
-| <br>
-|- static/              # Static ressources <br>
-    |- css/             # CSS Scripts <br>
-        |- style.css    # Personalized Style <br>
-    |- js/              # JavaScript scripts <br>
-        |- game.js      # User logic <br>
-    |- images/          # Images of the game (dev only) <br>
-| <br>
-|- templates/           # HTML templates <br>
-    |- base.html        # Base template <br>
-    |- menu.html        # Main menu <br>
-    |- game.html        # Game interface <br>
-    |- components       # Re-usable components <br>
-        |- sidebar.html # Lateral navigation menu <br>
-        |- display.html # Images display <br>
-| <br>
-|- utils/               # Utils and helpers <br>
-    |- __init__.py      # To make the folder a Python package <br>
-    |- database.py      # Supabase connexion and requests <br>
-    |- game_logic.py    # Game utils function <br>
-| <br>
-|- pichunt/             # Generated Python (Linux) virtual environment for the project <br>
+```tree
+pichunt_project/ 
+|- app.py               # Flask application 
+|- config.py            # Configuration File for important variables and parameters values
+|- requirements.txt     # Python dependencies for packages
+|- .gitignore           # Files to ignore by Git when pushing
+|- README.md            # The documentation of the project
+|
+|- models/              # Main logic and datas
+    |- __init__.py      # To make the folder a Python package
+    |- game.py          # Game logic (scoring, ...)
+    |- locations.py     # Sky locations dictionnary
+|
+|- routes/              # Website's routes and endpoints
+    |- __init__.py      # To make the folder a Python package
+    |- main.py          # Principal routes (pages)
+    |- api.py           # API REST Endpoints
+|
+|- static/              # Static ressources
+    |- css/             # CSS Scripts
+        |- style.css    # Personalized Style
+    |- js/              # JavaScript scripts
+        |- game.js      # User logic
+    |- images/          # Images of the game (dev only)
+|
+|- templates/           # HTML templates
+    |- base.html        # Base template
+    |- menu.html        # Main menu
+    |- game.html        # Game interface
+    |- components       # Re-usable components
+        |- sidebar.html # Lateral navigation menu
+        |- display.html # Images display
+|
+|- utils/               # Utils and helpers
+    |- __init__.py      # To make the folder a Python package
+    |- database.py      # Supabase connexion and requests
+    |- game_logic.py    # Game utils function
+|
+|- pichunt/             # Generated Python (Linux) virtual environment for the project
+```
 
 ## Noteworthy used packages
 
