@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Jeu - Sky Geoguessr{% endblock %}
+{% block title %}Game - Sky Geoguesser{% endblock %}
 
 {% block nav_content %}
 <div class="flex items-center space-x-4">
@@ -25,7 +25,7 @@
     <div class="w-80 bg-black/30 backdrop-blur-sm border-r border-white/10 overflow-y-auto">
         <div class="p-6 border-b border-white/10">
             <h2 class="text-2xl font-bold text-white mb-2">Localisation</h2>
-            <p class="text-blue-200 text-sm">Sélectionnez le lieu où l'image a été prise</p>
+            <p class="text-blue-200 text-sm">Select the location where the image was taken</p>
         </div>
         
         <div class="p-4">
@@ -86,7 +86,7 @@
             <div id="image-container" class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
                 <div id="loading-spinner" class="text-center text-white">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                    <p>Chargement de l'image...</p>
+                    <p>Image is loading...</p>
                 </div>
                 
                 <div id="image-display" class="hidden">
@@ -94,9 +94,9 @@
                     
                     <div class="text-center">
                         <div class="mb-4 text-white">
-                            <p class="text-lg">Sélection actuelle:</p>
+                            <p class="text-lg">Current selection:</p>
                             <p id="current-selection" class="text-blue-200">
-                                Aucune sélection
+                                Nothing selected
                             </p>
                         </div>
                         
@@ -106,7 +106,7 @@
                             class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 mx-auto disabled:cursor-not-allowed"
                         >
                             <i data-lucide="play" class="w-5 h-5"></i>
-                            Valider ma réponse
+                            Confirm my answer
                         </button>
                     </div>
                 </div>
@@ -125,11 +125,11 @@
         <div class="flex gap-4 mt-6">
             {% if mode == 'hunt' %}
             <button id="next-image" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Image suivante
+                Next image
             </button>
             {% endif %}
             <button id="close-result" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Continuer
+                Continue
             </button>
         </div>
     </div>

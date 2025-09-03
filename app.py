@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
 from datetime import datetime, date
 import random
@@ -36,6 +36,13 @@ game_logic = GameLogic()
 def menu():
     """Home page with the main menu"""
     return render_template('menu.html')
+
+#Redirect to game (easy)
+@app.route('/game')
+@app.route('/game/')
+def redirect_game():
+#    print("redirecting")
+    return redirect(url_for("game", mode="easy"))
 
 # Get /game/<mode>?difficulty=
 @app.route('/game/<mode>')

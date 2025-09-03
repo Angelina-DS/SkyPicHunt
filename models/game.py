@@ -67,12 +67,16 @@ class GameLogic:
         if area:            
             if area not in locations[realm]:
                 return {'valid': False, 'error': 'Invalid area for this realm.'}
+        else:
+            return {'valid': False, 'error': 'Please select a valid area.'}
         
         # Checking if a location is given
         if location:
             possible_locations = locations[realm][area] # List of the possible locations for this area
             if location not in possible_locations:
                 return {'valid': False, 'error': 'Invalid location for this area.'}
+        else:
+            return {'valid': False, 'error': 'Please select a valid location.'}
         
         # If all the checks have been passed
         return {'valid': True}
