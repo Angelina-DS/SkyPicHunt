@@ -1,9 +1,11 @@
+import random
 from models.locations import locations
 
 class GameLogic:
-    """Gestion de la logique du jeu Sky Geoguessr - Version adaptée"""
+    """Sky Picture Hunt game's logic management"""
     
     def __init__(self):
+        # Points system for each level of precision
         self.score_system = {
             'realm': 100,
             'area': 200,
@@ -12,93 +14,93 @@ class GameLogic:
     
     def calculate_score(self, correct_answer, selected_realm, selected_area, selected_location):
         """
-        Calculer le score basé sur la précision de la réponse
+        Calculation the score based on the precision of the answer
         
         Args:
-            correct_answer (dict): La bonne réponse
-            selected_realm (str): Realm sélectionné par le joueur
-            selected_area (str): Area sélectionnée par le joueur  
-            selected_location (str): Location sélectionnée par le joueur
+            correct_answer (dict): the correct answer, must have the following keys : 'realm', 'area', 'location'
+            selected_realm (str): selected realm by the player
+            selected_area (str): selected area by the player
+            selected_location (str): selected location by the player
             
         Returns:
-            int: Points obtenus
+            Score (int): total of points
         """
-        points = 0
+        score = 0
         
-        # Vérifier le realm
+        # Realm verification
+        # .get provides a protection if the key is absent from correct_answer
         if selected_realm == correct_answer.get('realm', ''):
-            points += self.score_system['realm']
+            score += self.score_system['realm'] # If the realm is right, we add the according points to the score
         
-        # Vérifier l'area (seulement si le realm est correct)
-        if selected_area == correct_answer.get('area', '') and points > 0:
-            points += self.score_system['area']
+        # Area verification (only if the realm was right : score is already > 0)
+        if selected_area == correct_answer.get('area', '') and score > 0:
+            score += self.score_system['area']
         
-        # Vérifier la location (seulement si area est correcte et location existe)
+        # Location verification (only if the realm and area were right and if there exist a location for this area and realm)
         correct_location = correct_answer.get('location', '')
         if (correct_location and 
             selected_location == correct_location and 
-            points >= self.score_system['realm'] + self.score_system['area']):
-            points += self.score_system['location']
+            score >= self.score_system['realm'] + self.score_system['area']):
+            score += self.score_system['location']
         
-        return points
+        return score
     
     def validate_selection(self, realm, area, location):
         """
-        Valider que la sélection du joueur est cohérente avec la nouvelle structure
+        Checking if the player's selection matches the expected structure of the dictionnary locations.
         
         Args:
-            realm (str): Realm sélectionné
-            area (str): Area sélectionnée
-            location (str): Location sélectionnée
+            realm (str): selected realm
+            area (str): selected area
+            location (str): selected location
             
         Returns:
-            dict: Résultat de la validation
+            dict: result of the validation, respects the structure {'valid': bool, 'error':'message' (optionnal)}
         """
         if not realm:
-            return {'valid': False, 'error': 'Veuillez sélectionner un realm'}
+            return {'valid': False, 'error': 'Please select a valid realm.'}
         
         if realm not in locations:
-            return {'valid': False, 'error': 'Realm invalide'}
+            return {'valid': False, 'error': 'Invalid realm.'}
         
-        if not area:
-            return {'valid': False, 'error': 'Veuillez sélectionner une area'}
-            
-        # Nouvelle structure : locations[realm] est directement un dict d'areas
-        if area not in locations[realm]:
-            return {'valid': False, 'error': 'Area invalide pour ce realm'}
+        # Checking if an area is given
+        if area:            
+            if area not in locations[realm]:
+                return {'valid': False, 'error': 'Invalid area for this realm.'}
         
-        # Vérifier la location si fournie
+        # Checking if a location is given
         if location:
-            available_locations = locations[realm][area]  # Plus simple !
-            if location not in available_locations:
-                return {'valid': False, 'error': 'Location invalide pour cette area'}
+            possible_locations = locations[realm][area] # List of the possible locations for this area
+            if location not in possible_locations:
+                return {'valid': False, 'error': 'Invalid location for this area.'}
         
+        # If all the checks have been passed
         return {'valid': True}
     
     def get_difficulty_settings(self, difficulty):
         """
-        Obtenir les paramètres selon la difficulté
+        Return game parameters/constraints for the selected level of difficulty.
         
         Args:
             difficulty (str): 'easy', 'medium', 'hard'
             
         Returns:
-            dict: Paramètres de difficulté
+            dict: parameters of the selected difficulty, return the easy difficulty ones by default
         """
         settings = {
             'easy': {
-                'description': 'Vues générales et reconnaissables',
+                'description': 'General and recognizable views',
                 'time_limit': None,
                 'hints_allowed': True
             },
             'medium': {
-                'description': 'Angles moins évidents',
-                'time_limit': 60,  # secondes
+                'description': 'Less obvious angles',
+                'time_limit': None,  # seconds
                 'hints_allowed': False
             },
             'hard': {
-                'description': 'Détails très spécifiques',
-                'time_limit': 30,
+                'description': 'Very specific details',
+                'time_limit': None,
                 'hints_allowed': False
             }
         }
@@ -107,15 +109,12 @@ class GameLogic:
     
     def get_random_location_with_details(self, difficulty='easy'):
         """
-        Obtenir une location aléatoire avec tous ses détails
-        Utile pour générer des questions
+        Select a random location with all its details according to the difficulty.
         
         Returns:
-            dict: Information complète sur la location
+            dict: Complete information about the location : realm, area, location, difficulty
         """
-        import random
         
-        # Filtrer selon la difficulté
         if difficulty == 'easy':
             # Areas avec beaucoup de locations facilement identifiables
             candidate_locations = []
