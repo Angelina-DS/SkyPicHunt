@@ -34,7 +34,7 @@ locations = {
         "Social Space" : {},
         "Butterfly Fields" : {},
         "Prairie Caves" : {},
-        "Prairie Peaks" : {}
+        "Prairie Peaks" : {},
         "Prairie Village" : {},
         "Eight-Player Puzzle Area" : {},
         "Prairie Temple" : {},
@@ -46,7 +46,7 @@ locations = {
         "Wind Paths" : {
             "Islands",
             "Wind tunnels"
-        }
+        },
         "Forest Clearing" : {
             "First Gate Plain",
             "Second Gate Courtyard",
@@ -97,7 +97,7 @@ locations = {
         "Crab Fields" : {},
         "Battlefield" : {},
         "Wasteland Temple" : {},
-    }
+    },
     "Vault of Knowledge" : {
         "Secret Area (Office Entrance)" : {},
         "Office" : {}, # IAP restricted area
