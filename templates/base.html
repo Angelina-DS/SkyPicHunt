@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sky Geoguessr{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- CSS personnalisé -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+    <!-- Navigation Header -->
+    <nav class="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="{{ url_for('menu') }}" class="text-2xl font-bold text-white">
+                    Sky Geoguessr
+                </a>
+                
+                {% block nav_content %}
+                <div class="flex items-center space-x-4">
+                    {% if session.score is defined %}
+                    <span class="text-white bg-white/10 px-3 py-1 rounded-full">
+                        Score: {{ session.score }}
+                    </span>
+                    {% endif %}
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-6 text-center text-white/60">
+        <p>&copy; 2024 Sky Geoguessr - Inspiré par Sky: Children of Light</p>
+    </footer>
+
+    <!-- Scripts JavaScript -->
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
