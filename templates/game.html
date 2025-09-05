@@ -22,7 +22,7 @@
 {% block content %}
 <div class="flex h-screen">
     <!-- Sidebar de navigation -->
-    <div class="w-80 bg-black/30 backdrop-blur-sm border-r border-white/10 overflow-y-auto">
+    <div id="sidebar" class="w-80 bg-black/30 backdrop-blur-sm border-r border-white/10 overflow-y-auto">
         <div class="p-6 border-b border-white/10">
             <h2 class="text-2xl font-bold text-white mb-2">Localisation</h2>
             <p class="text-blue-200 text-sm">Select the location where the image was taken</p>
@@ -32,7 +32,8 @@
             <div id="location-tree">
                 {% for realm, areas in locations.items() %}
                 <div class="mb-2">
-                    <button 
+                    <button
+                        id="button-{{ realm }}"
                         class="realm-btn w-full flex items-center justify-between p-3 rounded-lg transition-colors bg-white/5 hover:bg-white/10 text-gray-200"
                         data-realm="{{ realm }}"
                     >
@@ -41,10 +42,11 @@
                     </button>
                     
                     <!-- Areas sous ce realm -->
-                    <div class="realm-areas ml-4 mt-2 space-y-1 hidden">
+                    <div id="selection-{{ realm }}" class="realm-areas ml-4 mt-2 space-y-1 hidden">
                         {% for area, locations_list in areas.items() %}
                         <div>
-                            <button 
+                            <button
+                                id="button-{{ realm }}-{{ area }}"
                                 class="area-btn w-full flex items-center justify-between p-2 rounded transition-colors text-left bg-white/5 hover:bg-white/10 text-gray-300"
                                 data-realm="{{ realm }}"
                                 data-area="{{ area }}"
@@ -57,9 +59,10 @@
                             
                             <!-- Locations sous cette area (plus simple !) -->
                             {% if locations_list %}
-                            <div class="area-locations ml-4 mt-1 space-y-1 hidden">
+                            <div id="selection-{{ realm }}-{{ area }}" class="area-locations ml-4 mt-1 space-y-1 hidden">
                                 {% for location in locations_list %}
                                 <button 
+                                    id="button-{{ realm }}-{{ area }}-{{ location }}"
                                     class="location-btn w-full p-2 rounded transition-colors text-left text-xs bg-white/5 hover:bg-white/10 text-gray-400"
                                     data-realm="{{ realm }}"
                                     data-area="{{ area }}"
@@ -118,17 +121,17 @@
 <!-- Modal de résultat -->
 <div id="result-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
     <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 max-w-md w-full mx-4 border border-white/20">
-        <div id="result-content" class="text-center">
+        <div id="result-content" class="text-container text-center text-white">
             <!-- Contenu dynamique du résultat -->
         </div>
         
         <div class="flex gap-4 mt-6">
             {% if mode == 'hunt' %}
-            <button id="next-image" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
+            <button id="next-image" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
                 Next image
             </button>
             {% endif %}
-            <button id="close-result" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors">
+            <button id="close-result" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
                 Continue
             </button>
         </div>
@@ -149,6 +152,147 @@
         area: '', 
         location: ''
     };
+
+
+    // selecting/deselecting realms/areas/locations in the sidebar
+
+    function select(place){ //place is realm or realm-area or realm-area-location
+        if (place == "") return;
+        //show area select
+        const area_select = document.getElementById("selection-"+place);
+        if (area_select)
+            area_select.classList.remove("hidden");
+        //button selected
+        const button = document.getElementById("button-"+place);
+        if (button){
+            button.classList.replace("bg-white/5", "bg-white/30");
+            button.classList.replace("hover:bg-white/10", "hover:bg-white/50");
+            if (button.children.length > 1)
+                button.children[1].setAttribute("style", "transform: rotate(90deg);")
+        }
+    }
+    function unselect(place){
+        if (place == "") return;
+        //hide area select
+        const area_select = document.getElementById("selection-"+place);
+        if (area_select)
+            area_select.classList.add("hidden");
+        //button unselected
+        const button = document.getElementById("button-"+place);
+        if (button){
+            button.classList.replace("bg-white/30", "bg-white/5");
+            button.classList.replace("hover:bg-white/50", "hover:bg-white/10");
+//            button.querySelector("i").setAttribute("data-lucide", "chevron-right")
+//            button.children[1].setAttribute("data-lucide", "chevron-right")
+            if (button.children.length > 1)
+                button.children[1].removeAttribute("style")
+        }
+    }
+
+    //changing submission button
+    function set_valid_selection(){
+        document.getElementById("current-selection").innerText = currentSelection.realm+" > "+
+            currentSelection.area+" > "+currentSelection.location;
+        document.getElementById("submit-answer").removeAttribute("disabled");
+    }
+    function set_invalid_selection(){
+        document.getElementById("current-selection").innerText = "Nothing selected";
+        document.getElementById("submit-answer").setAttribute("disabled", true);
+    }
+
+    //Button handlers for sidebar
+    {% for realm, areas in locations.items() %}
+        document.getElementById("button-{{ realm }}").addEventListener("click", () => {
+            selected = "{{ realm }}";
+            if (selected == currentSelection.realm) selected = "";
+            unselect(currentSelection.realm);
+            unselect(currentSelection.realm+"-"+currentSelection.area);
+            unselect(currentSelection.realm+"-"+currentSelection.area+"-"+currentSelection.location);
+            currentSelection.realm = selected;
+            currentSelection.area = "";
+            currentSelection.location = "";
+            select(selected);
+            set_invalid_selection();
+        });
+
+        {% for area, locations in areas.items() %}
+            document.getElementById("button-{{ realm }}-{{ area }}").addEventListener("click", () => {
+                selected = "{{ area }}";
+                if (selected == currentSelection.area) selected = "";
+                unselect(currentSelection.realm+"-"+currentSelection.area);
+                unselect(currentSelection.realm+"-"+currentSelection.area+"-"+currentSelection.location);
+                currentSelection.area = selected;
+                currentSelection.location = "";
+                select(currentSelection.realm+"-"+selected);
+                set_invalid_selection();
+            });
+
+            {% for location in locations %}
+                document.getElementById("button-{{ realm }}-{{ area }}-{{ location }}").addEventListener("click", () => {
+                    selected = "{{ location }}";
+                    if (selected == currentSelection.location) selected = "";
+                    unselect(currentSelection.realm+"-"+currentSelection.area+"-"+currentSelection.location);
+                    currentSelection.location = selected;
+                    select(currentSelection.realm+"-"+currentSelection.area+"-"+selected);
+                    if (selected != "")
+                        set_valid_selection();
+                    else
+                        set_invalid_selection();
+
+                });
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+
+
+    //Submitting the answer and handling response
+
+    async function fetchSubmission(){
+        const data = {
+            realm: currentSelection.realm,
+            area: currentSelection.area,
+            location: currentSelection.location
+        }
+
+        const flaskResponse = await fetch("/api/check-answer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+        const result = await flaskResponse.json();
+        console.log(result);
+        if (!flaskResponse.ok)
+            document.getElementById("current-selection").innerText = "Error: "+result.error;
+        else{
+            document.getElementById("submit-answer").classList.add("hidden");
+            document.getElementById("sidebar").classList.add("hidden");
+            document.getElementById("score-display").innerText = "Score: "+result.total_score;
+
+            //showing the result as txt
+            title = result.points == 0 ? "Wrong" : (result.points < 600 ? "Almost" : "Correct!");
+            place = "The correct location is "+result.correct_answer.realm+" > "+result.correct_answer.area+" > "+
+                result.correct_answer.location;
+            correct_guesses = [];
+            if (result.is_correct.realm) correct_guesses.push("realm");
+            if (result.is_correct.area) correct_guesses.push("area");
+            if (result.is_correct.location) correct_guesses.push("location");
+            last = correct_guesses.length == 0 ? null : correct_guesses.pop();
+            guess_result = (last == null) ? "You did not guess the correct area!" : "You guessed the correct "
+                +correct_guesses.join(", ")+" and "+last+"!";
+            document.getElementById("result-content").innerHTML = "<span class=\"font-semibold text-2xl\">"+title+"</span><p class=\"font-semibold text-lg\">"+place+"</p><p>"+guess_result+"</p>";
+            document.getElementById("result-modal").classList.remove("hidden");
+        }//
+    }
+
+    // Submission button
+    document.getElementById("submit-answer").addEventListener("click", () => {
+        fetchSubmission();
+    });
+
+    // continue button
+    document.getElementById("close-result").addEventListener("click", () => {
+        document.getElementById("result-modal").classList.add("hidden");
+    });
 
     // Charger la première image
 //    window.addEventListener('DOMContentLoaded', function() {

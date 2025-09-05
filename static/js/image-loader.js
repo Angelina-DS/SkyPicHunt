@@ -1,5 +1,4 @@
 export async function loadImageFromJson(endpointUrl, imgSelector, urlFieldName="url"){
-    console.log("running loadimagefromjson"); //bug testing
     const img = document.querySelector(imgSelector);
     if (!img) return console.error("Image element not found:", imgSelector);
 
@@ -21,7 +20,6 @@ export async function loadImageFromJson(endpointUrl, imgSelector, urlFieldName="
         }, {once: true});
 
         img.src = ImageUrl;
-        console.log("finished imgfromjson!");
     } catch (err) {
         console.error("loadImageFromJson error:", err);
         img?.closest(".image-container")?.classList?.add("error");

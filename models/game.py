@@ -110,7 +110,10 @@ class GameLogic:
         }
         
         return settings.get(difficulty, settings['easy'])
-    
+
+    def get_all_pictures(self):
+        return []
+
     def get_random_location_with_details(self, difficulty='easy'): # TO ADAPT
         """
         Select a random location with all its details according to the difficulty.
@@ -118,45 +121,12 @@ class GameLogic:
         Returns:
             dict: Complete information about the location : realm, area, location, difficulty
         """
-        
-        if difficulty == 'easy':
-            # Areas avec beaucoup de locations facilement identifiables
-            candidate_locations = []
-            for realm, areas in locations.items():
-                for area, locations in areas.items():
-                    if len(locations) >= 2:  # Areas avec plusieurs locations
-                        for location in locations:
-                            candidate_locations.append({
-                                'realm': realm,
-                                'area': area, 
-                                'location': location,
-                                'difficulty': difficulty
-                            })
-        
-        elif difficulty == 'medium':
-            # Toutes les locations spécifiques
-            candidate_locations = []
-            for realm, areas in locations.items():
-                for area, locations in areas.items():
-                    if locations:  # Au moins une location
-                        for location in locations:
-                            candidate_locations.append({
-                                'realm': realm,
-                                'area': area,
-                                'location': location, 
-                                'difficulty': difficulty
-                            })
-        
-        else:  # hard
-            # Areas sans locations spécifiques (plus difficile)
-            candidate_locations = []
-            for realm, areas in locations.items():
-                for area, locations in areas.items():
-                    candidate_locations.append({
-                        'realm': realm,
-                        'area': area,
-                        'location': '',  # Pas de location spécifique
-                        'difficulty': difficulty
-                    })
-        
-        return random.choice(candidate_locations) if candidate_locations else None
+
+        pictures = self.get_all_pictures()
+
+        #filter for difficulty:
+        min_bound = {"easy": 0.0, "medium": 0.33, "hard": 0.67}[difficulty]
+        max_bound = {"easy": 0.33, "medium": 0.67, "hard": 1.01}[difficulty]
+        pictures = list(filter(lambda x: "rating" in x and min_bound <= x["rating"] < max_bound, pictures))
+
+        return random.choice(pictures) if len(pictures) > 0 else None
