@@ -97,7 +97,7 @@
                     
                     <div class="text-center">
                         <div class="mb-4 text-white">
-                            <p class="text-lg">Current selection:</p>
+                            <p id="current-selection-title" class="text-lg">Current selection:</p>
                             <p id="current-selection" class="text-blue-200">
                                 Nothing selected
                             </p>
@@ -111,6 +111,17 @@
                             <i data-lucide="play" class="w-5 h-5"></i>
                             Confirm my answer
                         </button>
+                        <div id="picture-continue" class="hidden">
+                            {% if mode == 'hunt' %}
+                            <button onclick="window.location.href='{{ url_for('game', mode='hunt') }}'" class="btn-nextimage flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
+                                Next image
+                            </button>
+                            {% else %}
+                            <button onclick="window.location.href='{{ url_for('menu') }}'" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
+                                Menu
+                            </button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,7 +138,7 @@
         
         <div class="flex gap-4 mt-6">
             {% if mode == 'hunt' %}
-            <button id="next-image" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
+            <button id="next-image" onclick="window.location.href='{{ url_for('game', mode='hunt') }}'" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
                 Next image
             </button>
             {% endif %}
@@ -280,7 +291,17 @@
             guess_result = (last == null) ? "You did not guess the correct area!" : "You guessed the correct "
                 +correct_guesses.join(", ")+" and "+last+"!";
             document.getElementById("result-content").innerHTML = "<span class=\"font-semibold text-2xl\">"+title+"</span><p class=\"font-semibold text-lg\">"+place+"</p><p>"+guess_result+"</p>";
+
+            document.getElementById("current-selection-title").innerHTML = "Solution:";
+            green = "#90ee90";
+            red =   "#ffb6c1";
+            document.getElementById("current-selection").innerHTML =
+                "<span style=\"color: "+(result.is_correct.realm ? green : red)+";\">"+ currentSelection.realm+"</span> > "+
+                "<span style=\"color: "+(result.is_correct.area ? green : red)+";\">"+ currentSelection.area+"</span> > "+
+                "<span style=\"color: "+(result.is_correct.location ? green : red)+";\">"+ currentSelection.location+"</span>";
+
             document.getElementById("result-modal").classList.remove("hidden");
+            document.getElementById("picture-continue").classList.remove("hidden");
         }//
     }
 
