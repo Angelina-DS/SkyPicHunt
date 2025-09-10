@@ -16,28 +16,48 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-    <!-- Navigation Header -->
-    <nav class="bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <a href="{{ url_for('menu') }}" class="text-2xl font-bold text-white">
-                    Sky Geoguesser
-                </a>
-                
-                {% block nav_content %}
-                <div class="flex items-center space-x-4">
-                    {% if session.score is defined %}
-                    <span class="text-white bg-white/10 px-3 py-1 rounded-full">
-                        Score: {{ session.score }}
-                    </span>
-                    {% endif %}
-                </div>
-                {% endblock %}
-            </div>
-        </div>
-    </nav>
+<body class="min-h-screen">
+    <div id="background-image" class="" style="background-image: url('/static/images/background01.jpg'); position: fixed; top:0px; left:0px; width: 100%; height:100%; background-size: cover; background-position: center; z-index: -1; filter:blur(1px);">
+        <div style="background-color: rgba(0, 0, 0, 0.5); position: fixed; top:0px; left:0px; width: 100%; height:100%;"></div>
+    </div>
 
+<!--Loading background color while image is not loaded (does not work and probably unnecessary)
+    <div id="background-color" style="background: linear-gradient(30deg, cyan, lightblue); position: fixed; top:0px; left:0px; width: 100%; height:100%;"></div>
+    <script>
+        //show background color until the image is loaded
+        const img=new Image();
+        img.scr='/static/images/background01.jpg';
+        const bg_img = document.getElementById("background-image");
+        const bg_color = document.getElementById("background-color");
+        img.onload = function(){
+            bg_img.classList.remove("hidden");
+            bg_color.classList.add("hidden");
+            console.log("img loaded");
+        }
+    </script> -->
+
+    <!-- Navigation Header -->
+    <div>
+        <nav class="bg-black/20 backdrop-blur-sm border-b border-white/10">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <a href="{{ url_for('menu') }}" class="text-2xl font-bold text-white">
+                        Sky Geoguesser
+                    </a>
+
+                    {% block nav_content %}
+                    <div class="flex items-center space-x-4">
+                        {% if session.score is defined %}
+                        <span class="text-white bg-white/10 px-3 py-1 rounded-full">
+                            Score: {{ session.score }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+        </nav>
+    </div>
     <!-- Contenu principal -->
     <main class="flex-1">
         {% block content %}{% endblock %}

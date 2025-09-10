@@ -2,8 +2,8 @@
 
 {% block content %}
 <section class="center-column">
-    <div class="class=flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 text-gray-200">
-        <h1 class="font-semibold text-center">Solve the daily picture hunt!</h1>
+    <div class="class=flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-black/40 text-gray-200">
+        <h1 class="font-semibold text-center text-xl">Solve the daily picture hunt!</h1>
     </div>
     <div class="flex-1 flex flex-col items-center justify-center p-8">
         <!-- Zone d'affichage de l'image -->
@@ -14,24 +14,24 @@
             </div>
             <!-- src="{\{ url_for('get_new_image,error') }}" -->
             <div id="image-display" class="hidden">
-                <img id="game-image" class="w-full max-w-2xl h-auto rounded-xl shadow-2xl mb-6" alt="Image à deviner">
+                <img id="game-image" class="w-full max-w-2xl h-auto rounded-xl shadow-2xl mb-6" alt="Image to guess">
 
             </div>
         </div>
     </div>
     <div class="center-column flex justify-center">
-        <div class="button-column flex flex-col justify-center">
+        <div class="button-column flex flex-col justify-center" style="gap: 20px;">
             <button
                 class="game-btn flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 hover:bg-white/10 text-gray-200 text-center"
                 onclick="location.href='{{url_for('game', mode='daily') }}'"
             >
-                <span class="font-semibold text-center">Daily picture</span>
+                <span class="font-semibold text-center text-xl">Daily picture</span>
             </button>
             <button
                 class="game-btn flex items-center justify-center justify-between p-3 rounded-lg transition-colors bg-white/5 hover:bg-white/10 text-gray-200 text-center"
                 onclick="location.href='{{url_for('game', mode='hunt') }}'"
             >
-                <span class="font-semibold text-center">Random</span>
+                <span class="font-semibold text-center text-xl">Random</span>
             </button>
         </div>
     </div>
