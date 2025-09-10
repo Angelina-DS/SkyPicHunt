@@ -21,8 +21,8 @@ class SupabaseManager():
             bool: True if connection works, False otherwise
         """
         try:
-            response = self.supabase.table('images').select('count').execute()
-            print(f"Connection test successful : {len(response.data)} images in database.")
+            response = self.supabase.table('Pichunt_images').select('count').execute()
+            print(f"Connection test successful : {len(response.data) + 1} images in database.")
             return True
 
         except Exception as e:
@@ -86,7 +86,7 @@ class SupabaseManager():
             # lte operator for 'less than or equal'
             response = self.supabase.table("Pichunt_images").select('*').lte('appeared', date).execute()
 
-            if not reponse.data :
+            if not response.data :
                 print(f"No image found for the daily on date : {today.strftime('%Y-%m-%d')}")
                 return
             
