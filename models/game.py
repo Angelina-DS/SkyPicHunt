@@ -111,22 +111,19 @@ class GameLogic:
         
         return settings.get(difficulty, settings['easy'])
 
-    def get_all_pictures(self):
-        return []
-
-    def get_random_location_with_details(self, difficulty='easy'): # TO ADAPT
+    # def get_random_location_with_details(self, difficulty='easy'):
         """
-        Select a random location with all its details according to the difficulty.
+        Select a random picture with all its details according to the difficulty.
         
         Returns:
             dict: Complete information about the location : realm, area, location, difficulty
         """
 
-        pictures = self.get_all_pictures()
+        # pictures = self.get_all_pictures()
 
-        #filter for difficulty:
-        min_bound = {"easy": 0.0, "medium": 0.33, "hard": 0.67}[difficulty]
-        max_bound = {"easy": 0.33, "medium": 0.67, "hard": 1.01}[difficulty]
-        pictures = list(filter(lambda x: "rating" in x and min_bound <= x["rating"] < max_bound, pictures))
+        # Define the bound values for each difficulty
+        # min_bound = {"easy": 0.0, "medium": 0.33, "hard": 0.67}[difficulty]
+        # max_bound = {"easy": 0.33, "medium": 0.67, "hard": 1.01}[difficulty]
+        # pictures = list(filter(lambda x: "rating" in x and min_bound <= x["rating"] < max_bound, pictures))
 
-        return random.choice(pictures) if len(pictures) > 0 else None
+        #return random.choice(pictures) if len(pictures) > 0 else None

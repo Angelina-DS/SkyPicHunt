@@ -20,10 +20,14 @@ app.config['SUPABASE_KEY'] = config.APIkey # os.getenv('APIkey')
 # Creating Database manager only if SUPABASE_URL is defined
 try :
     db_manager = SupabaseManager()
-    print("Supabase successfully connected")
+    print("Supabase connection successfully created")
 except Exception as e :
-    print(f"Supabase error : {e}")
+    print(f"Supabase error while creating the connection : {e}")
     db_manager = None
+
+# Test the connection to Supabase
+if db_manager:
+    db_manager.test_connection()
     
 # Points calculation logic
 game_logic = GameLogic()
@@ -37,7 +41,7 @@ def menu():
     """Home page with the main menu"""
     return render_template('menu.html')
 
-#Redirect to game (easy)
+# Redirect to game (easy)
 @app.route('/game')
 @app.route('/game/')
 def redirect_game():

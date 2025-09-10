@@ -1,7 +1,7 @@
 # Centralized configuration of the application, contains main variable and parameters
 # Set as environment variables once on prod for security
 
-# App secret key
+# Flask app secret key
 secret_key = '148557'
 
 # Supabase API credentials
