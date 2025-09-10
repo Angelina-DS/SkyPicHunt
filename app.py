@@ -6,6 +6,7 @@ from models.locations import locations # Locations list
 from models.game import GameLogic # Scoring logic
 from utils.database import SupabaseManager # Database access
 import config # Configuration variables
+import supabase
 
 # --- Creating the application with an instance of the class Flask ---
 # app is the central object which will manage routes, configurations and extensions.
@@ -75,7 +76,7 @@ def game(mode):
 @app.route('/api/new-image')
 def get_new_image():
     """API to select a new image according to the difficulty"""
-    difficulty = request.args.get('difficulty', 'easy')
+    difficulty = request.args.get('difficulty', 0)
     
     # Prod case : if Supabase is avalaible
     if db_manager:
@@ -138,7 +139,7 @@ def get_daily_image():
 
     # Prod case : daily picture is picked in Supabase
     if db_manager:
-        image_data = db_manager.get_daily_image(today)
+        image_data = db_manager.get_supabase_daily()
 
         # If no daily image is found
         if not image_data:

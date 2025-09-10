@@ -1,4 +1,5 @@
-from supabase import create_client, Client
+import supabase
+from supabase import create_client, Client, ClientOptions
 import random
 from datetime import date, datetime, timedelta
 import config
@@ -6,8 +7,21 @@ import config
 class SupabaseManager():
     def __init__(self):
         """Initialize Supabase client connection"""
-        try : 
-            self.supabase : Client = create_client(config.URL, config.APIkey)
+        try :
+            # Create the Supabase client
+            supabase = create_client(config.URL, config.APIkey)
+
+            # User connection with email and password
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": config.email,
+                "password": config.password
+            })
+
+            # Get the JWT token
+            # token = auth_response.session.access_token
+
+            # Re-create the client with the Authorization header and token
+            # self.supabase : Client = create_client(config.URL, config.APIkey, options=ClientOptions(global_headers={"Authorization": f"Bearer {token}"}))
             print("Supabase client initialized sucessfully")
         except Exception as e :
             print(f"Supabase client initialization error : {e}")
@@ -65,7 +79,7 @@ class SupabaseManager():
             return None
 
 
-    def get_daily_image(self, date):
+    def get_supabase_daily(self):
         """
         Get the daily image based on the current date
         
@@ -83,8 +97,9 @@ class SupabaseManager():
         try :
             # Get all images without filtering on difficulty (daily's difficulty will vary)
             # But on filtering on the "appeared" date that has to be a year ago or more
+            # or operator for 'select images that comply with this condition OR this one'
             # lte operator for 'less than or equal'
-            response = self.supabase.table("Pichunt_images").select('*').lte('appeared', date).execute()
+            response = self.supabase.table("Pichunt_images").select('*').filter("appeared", "is", "null").execute()
 
             if not response.data :
                 print(f"No image found for the daily on date : {today.strftime('%Y-%m-%d')}")
