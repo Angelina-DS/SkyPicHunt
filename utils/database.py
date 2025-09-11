@@ -9,19 +9,19 @@ class SupabaseManager():
         """Initialize Supabase client connection"""
         try :
             # Create the Supabase client
-            supabase = create_client(config.URL, config.APIkey)
+            self.supabase = create_client(config.URL, config.APIkey)
 
             # User connection with email and password
-            auth_response = supabase.auth.sign_in_with_password({
+            auth_response = self.supabase.auth.sign_in_with_password({
                 "email": config.email,
                 "password": config.password
             })
 
             # Get the JWT token
-            # token = auth_response.session.access_token
+            token = auth_response.session.access_token
 
             # Re-create the client with the Authorization header and token
-            # self.supabase : Client = create_client(config.URL, config.APIkey, options=ClientOptions(global_headers={"Authorization": f"Bearer {token}"}))
+            self.supabase : Client = create_client(config.URL, config.APIkey, options=ClientOptions(headers={"Authorization": f"Bearer {token}"}))
             print("Supabase client initialized sucessfully")
         except Exception as e :
             print(f"Supabase client initialization error : {e}")
@@ -58,9 +58,9 @@ class SupabaseManager():
             # eq operator for 'equal'
             response = self.supabase.table("Pichunt_images").select('*').eq('difficulty', difficulty).execute()
 
-            if not reponse.data :
+            if not response.data :
                 print(f"No image found for difficulty : {difficulty}")
-                return
+                return None
 
             # Select an image randomly among the ones we got via the request
             random_image = random.choice(response.data)
@@ -76,15 +76,12 @@ class SupabaseManager():
         
         except Exception as e :
             print(f"Error while getting a random image for the difficulty : {e}")
-            return None
+            raise
 
 
     def get_supabase_daily(self):
         """
         Get the daily image based on the current date
-        
-        Args :
-            date (date) : current date
         
         Returns :
             dict : the selected image for the daily challenge and its information : id, url, realm, area, location, difficulty, appeared
@@ -103,7 +100,7 @@ class SupabaseManager():
 
             if not response.data :
                 print(f"No image found for the daily on date : {today.strftime('%Y-%m-%d')}")
-                return
+                return None
             
             daily_image = random.choice(response.data)
 
@@ -122,3 +119,4 @@ class SupabaseManager():
 
         except Exception as e :
             print(f"Error while getting a daily image for the current date : {e}")
+            raise

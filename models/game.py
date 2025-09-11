@@ -86,7 +86,7 @@ class GameLogic:
         Return game parameters/constraints for the selected level of difficulty.
         
         Args:
-            difficulty (str): 'easy', 'medium', 'hard'
+            difficulty (float) : 0.0 - 0.32 (easy), 0.33 - 0.66 (medium), 0.67 - 1.01 (hard)
             
         Returns:
             dict: parameters of the selected difficulty, return the easy difficulty ones by default
@@ -95,21 +95,35 @@ class GameLogic:
             'easy': {
                 'description': 'General and recognizable views',
                 'time_limit': None,
-                'hints_allowed': True
+                'hints_allowed': True,
+                'range': (0.0, 0.32)
             },
             'medium': {
                 'description': 'Less obvious angles',
                 'time_limit': None,  # seconds
-                'hints_allowed': False
+                'hints_allowed': False,
+                'range': (0.33, 0.66)
             },
             'hard': {
                 'description': 'Very specific details',
                 'time_limit': None,
-                'hints_allowed': False
+                'hints_allowed': False,
+                'range': (0.67, 1.01)
             }
         }
         
-        return settings.get(difficulty, settings['easy'])
+        # Convert float number into a difficulty name
+        if 0.0 <= difficulty <= 0.32:
+            difficulty_name = 'easy'
+        elif 0.33 <= difficulty <= 0.66:
+            difficulty_name = 'medium'
+        elif 0.67 <= difficulty <= 1.01:
+            difficulty_name = 'hard'
+        # else:
+            # If the value of difficulty is outside the previous bounds, return an error
+            # print("Invalid difficulty value")
+        
+        return settings.get(difficulty_name, settings['easy'])
 
     # def get_random_location_with_details(self, difficulty='easy'):
         """
