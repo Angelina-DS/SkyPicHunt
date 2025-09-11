@@ -168,6 +168,74 @@ def get_daily_image():
     # Return the daily picture in the frontend
     return jsonify(image_data)
 
+
+# --- JSON API : check the players' answer ---
+
+# Get /api/new-image
+@app.route('/api/preview-image')
+def get_preview_image():
+    """API to select a new image according to the difficulty"""
+    type = request.args.get('type', "")
+    realm = request.args.get('realm', "")
+    area = request.args.get('area', "")
+    location = request.args.get('location', "")
+    if type not in ["realm", "area", "location"]:
+        return jsonify({"error": "Unknown preview type: "+type}), 404
+    elif realm=="" or (type in ["area", "location"] and area == "") or (type == "location" and location==""):
+        return jsonify({"error": "Not enough arguments provided: '"+realm+"' > '"+area+"' > '"+location+"'"}), 404
+
+
+    # Prod case : if Supabase is avalaible
+    if db_manager:
+        # We request an image adapted to the difficulty
+        image_data = db_manager.get_preview_image(type, realm, area, location)
+
+        # If no image exist for the selected difficulty
+        if not image_data:
+            return jsonify({
+                'error': f'No image found for the preview of {type}: "{realm}" > "{area}" > "{location}"'
+            }), 404
+
+    # Dev case : else
+    else:
+        # We use this hard coded sample list of images as an instance
+        sample_images = [
+            {
+                'id': 1,
+                'url': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+                'type': 'realm',
+                'realm': 'Isle of Dawn',
+            },
+            {
+                'id': 2,
+                'url': 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&h=400&fit=crop',
+                'type': 'area',
+                'realm': 'Daylight Prairie',
+                'area': 'Butterfly Fields',
+            },
+            {
+                'id': 3,
+                'url': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop',
+                'type': 'location',
+                'realm': 'Hidden Forest',
+                'area': 'Forest Clearing',
+                'location': 'First Gate Plain',
+            }
+        ]
+        # Sub-list of images filtered to match the current difficulty
+        filtered_images = [img for img in sample_images if img['type'] == type and img["realm"] == realm
+                and (type=="realm" or img["area"] == area) and (type!="location" or img["location"] == location)]
+        # If filetered_images is not empty, then we chose a random image in it, else we pick the first image in sample_images
+        image_data = filtered_images[0]
+        if not image_data:
+            return jsonify({
+                'error': f'No fitting preview image found in sample images for {type}: "{realm}" > "{area}" > "{location}"'
+            }), 404
+
+    # Return the image on the frontend (JSON)
+    return jsonify(image_data)
+
+
 # --- JSON API : check the players' answer ---
 
 # POST /api/check-answer

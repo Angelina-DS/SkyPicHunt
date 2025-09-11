@@ -120,3 +120,6 @@ class SupabaseManager():
         except Exception as e :
             print(f"Error while getting a daily image for the current date : {e}")
             raise
+
+    def get_preview_image(self, type, realm, area="", location=""):
+        return None
