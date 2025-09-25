@@ -76,12 +76,12 @@ def game(mode):
 @app.route('/api/new-image')
 def get_new_image():
     """API to select a new image according to the difficulty"""
-    difficulty = request.args.get('difficulty', 0)
+    difficulty = request.args.get('difficulty', "Easy")
     
     # Prod case : if Supabase is avalaible
     if db_manager:
         # We request an image adapted to the difficulty
-        image_data = db_manager.get_random_image(difficulty)
+        image_data = db_manager.get_random_image(game_logic, difficulty)
 
         # If no image exist for the selected difficulty
         if not image_data:
@@ -179,9 +179,9 @@ def get_preview_image():
     realm = request.args.get('realm', "")
     area = request.args.get('area', "")
     location = request.args.get('location', "")
-    if type not in ["realm", "area", "location"]:
+    if type.lower() not in ["realm", "area", "location"]:
         return jsonify({"error": "Unknown preview type: "+type}), 404
-    elif realm=="" or (type in ["area", "location"] and area == "") or (type == "location" and location==""):
+    elif realm=="" or (type.lower() in ["area", "location"] and area == "") or (type.lower() == "location" and location==""):
         return jsonify({"error": "Not enough arguments provided: '"+realm+"' > '"+area+"' > '"+location+"'"}), 404
 
 

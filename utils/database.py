@@ -36,14 +36,14 @@ class SupabaseManager():
         """
         try:
             response = self.supabase.table('Pichunt_images').select('count').execute()
-            print(f"Connection test successful : {len(response.data) + 1} images in database.")
+            print(f"Connection test successful : {response.data[0]['count'] if response.data and 'count' in response.data[0] else 'unknown'} images in database.")
             return True
 
         except Exception as e:
             print(f"Connection test failed: {e}")
             return False
 
-    def get_random_image(self, difficulty=0):
+    def get_random_image(self, game_logic, difficulty="Easy"):
         """
         Get a random image based on a difficulty level.
 
@@ -56,7 +56,8 @@ class SupabaseManager():
         try :
             # Query, similar to SQL, to get the images filtering on the difficulty
             # eq operator for 'equal'
-            response = self.supabase.table("Pichunt_images").select('*').eq('difficulty', difficulty).execute()
+            difficulty_range = game_logic.get_difficulty_range(difficulty)
+            response = self.supabase.table("Pichunt_images").select('*').gte("difficulty", difficulty_range[0]).lt("difficulty", difficulty_range[1]).execute()
 
             if not response.data :
                 print(f"No image found for difficulty : {difficulty}")
@@ -88,21 +89,32 @@ class SupabaseManager():
         """
         # Calculate the limit date for filtering
         today = datetime.now()
+        today_date = today.strftime('%Y-%m-%d')
         one_year_ago = today - timedelta(days=365)
         date = one_year_ago.strftime('%Y-%m-%d')  # Expected by Supabase ISO format
 
         try :
-            # Get all images without filtering on difficulty (daily's difficulty will vary)
-            # But on filtering on the "appeared" date that has to be a year ago or more
-            # or operator for 'select images that comply with this condition OR this one'
-            # lte operator for 'less than or equal'
-            response = self.supabase.table("Pichunt_images").select('*').filter("appeared", "is", "null").execute()
+            # Check whether there is a daily image already:
+            response = self.supabase.table("Pichunt_images").select("*").eq("appeared", today_date).execute()
+            if response.data:
+                daily_image = response.data[0]
 
-            if not response.data :
-                print(f"No image found for the daily on date : {today.strftime('%Y-%m-%d')}")
-                return None
-            
-            daily_image = random.choice(response.data)
+            else:
+                # Get all images without filtering on difficulty (daily's difficulty will vary)
+                # But on filtering on the "appeared" date that has to be a year ago or more
+                # or operator for 'select images that comply with this condition OR this one'
+                # lte operator for 'less than or equal'
+                response = self.supabase.table("Pichunt_images").select('*').filter("appeared", "is", "null").execute()
+
+                if not response.data:
+                    response = self.supabase.table("Pichunt_images").select('*').order("appeared", nullsfirst=False).execute()
+                    if not response.data:
+                        print(f"No image found for the daily on date : {today.strftime('%Y-%m-%d')}")
+                        return None
+                    else:
+                        daily_image = response.data[0]
+                else:
+                    daily_image = random.choice(response.data)
 
             # Updating the column "appeared" in the Supabase table for the daily_image (filtering on the id)
             self.supabase.table("Pichunt_images").update({'appeared': today.strftime('%Y-%m-%d')}).eq('id', daily_image['id']).execute()
@@ -121,5 +133,26 @@ class SupabaseManager():
             print(f"Error while getting a daily image for the current date : {e}")
             raise
 
-    def get_preview_image(self, type, realm, area="", location=""):
-        return None
+    def get_preview_image(self, type:str, realm:str, area:str="", location:str="") -> dict|None:
+        try:
+            print("get preview image for:",type,": ", realm, ",", area, ",", location)
+            query = self.supabase.table("Preview_images").select("*").eq("Type", type.capitalize()).eq("Realm", realm)
+            if type.capitalize() in ["Area", "Location"]:
+                query = query.eq("Area", area)
+            if type.capitalize() == "Location":
+                query = query.eq("Location", location)
+            response = query.execute()
+            print("response: ", response, "data:", response.data)
+            if response.data:
+                return {
+                    "id": response.data[0]["id"],
+                    "url": response.data[0]["URL"],
+                    "type": response.data[0]["Type"],
+                    "realm": response.data[0]["Realm"],
+                    "area": response.data[0]["Area"],
+                    "location": response.data[0]["Location"],
+                }
+        except Exception as e:
+            print(f"Error while getting a preview image : {e}")
+            raise
+

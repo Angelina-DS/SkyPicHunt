@@ -113,25 +113,36 @@ class GameLogic:
         }
         
         # Convert float number into a difficulty name
-        if 0.0 <= difficulty <= 0.32:
+        if 0.0 <= difficulty < 0.33:
             difficulty_name = 'easy'
-        elif 0.33 <= difficulty <= 0.66:
+        elif 0.33 <= difficulty < 0.67:
             difficulty_name = 'medium'
-        elif 0.67 <= difficulty <= 1.01:
+        elif 0.67 <= difficulty <= 1.0:
             difficulty_name = 'hard'
-        # else:
+        else:
             # If the value of difficulty is outside the previous bounds, return an error
-            # print("Invalid difficulty value")
+            print("Error in get_difficulty_settings: Invalid difficulty value")
         
         return settings.get(difficulty_name, settings['easy'])
 
+    def get_difficulty_range(self, difficulty):
+        if difficulty.lower() == "easy":
+            return (0.0, 0.33)
+        elif difficulty.lower() == "medium":
+            return (0.33, 0.67)
+        elif difficulty.lower() == "hard":
+            return (0.67, 1.01)
+        else:
+            print("Error in get_difficulty_range: Invalid difficulty value")
+            return None
+
     # def get_random_location_with_details(self, difficulty='easy'):
-        """
-        Select a random picture with all its details according to the difficulty.
-        
-        Returns:
-            dict: Complete information about the location : realm, area, location, difficulty
-        """
+    #     """
+    #     Select a random picture with all its details according to the difficulty.
+    #
+    #     Returns:
+    #         dict: Complete information about the location : realm, area, location, difficulty
+    #     """
 
         # pictures = self.get_all_pictures()
 

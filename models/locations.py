@@ -122,5 +122,8 @@ locations = {
         "Moomin House" : {}, # IAP restricted area
         "Two Embers Town" : {},
         "Cinema" : {}
+    },
+    "Eye of Eden": {
+
     }
 }

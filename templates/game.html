@@ -214,30 +214,31 @@
         document.getElementById("submit-answer").removeAttribute("disabled");
     }
     function set_invalid_selection(){
-        document.getElementById("current-selection").innerText = "Nothing selected";
+        document.getElementById("current-selection").innerText = (currentSelection.realm == "" ? "Nothing selected" :
+            currentSelection.realm+" > "+(currentSelection.area == "" ? "..." : currentSelection.area)+" > "+
+            (currentSelection.location == "" ? "..." : currentSelection.location));
         document.getElementById("submit-answer").setAttribute("disabled", true);
     }
 
     function load_selected_realm_image(realm_name){
         if (realm_name == "") return document.getElementById("select-realm-image").classList.add("hidden");
         let image_url="/api/preview-image?type=realm&realm="+realm_name;
-//        let image_url="/api/daily-image";
-        loadImageFromJson(image_url, "#select-realm-image", "url");
-        return document.getElementById("select-realm-image").classList.remove("hidden");
+        loadImageFromJson(image_url, "#select-realm-image", "url", true);
+        document.getElementById("select-realm-image").classList.remove("hidden");
     }
     function load_selected_area_image(realm_name, area_name){
         if (area_name == "") return document.getElementById("select-area-image").classList.add("hidden");
         let image_url="/api/preview-image?type=area&realm="+realm_name+"&area="+area_name;
 //        let image_url="/api/daily-image";
-        loadImageFromJson(image_url, "#select-area-image", "url");
-        return document.getElementById("select-area-image").classList.remove("hidden");
+        loadImageFromJson(image_url, "#select-area-image", "url", true);
+        document.getElementById("select-area-image").classList.remove("hidden");
     }
     function load_selected_location_image(realm_name, area_name, location_name){
         if (location_name == "") return document.getElementById("select-location-image").classList.add("hidden");
         let image_url="/api/preview-image?type=location&realm="+realm_name+"&area="+area_name+"&location="+location_name;
 //        let image_url="/api/daily-image";
-        loadImageFromJson(image_url, "#select-location-image", "url");
-        return document.getElementById("select-location-image").classList.remove("hidden");
+        loadImageFromJson(image_url, "#select-location-image", "url", true);
+        document.getElementById("select-location-image").classList.remove("hidden");
     }
 
     //Button handlers for sidebar
@@ -255,7 +256,7 @@
             currentSelection.location = "";
             select(selected);
             set_invalid_selection();
-            document.getElementById("current-selection").innerText = currentSelection.realm+" > ... > ...";
+            document.getElementById("current-selection").innerText = (selected == "" ? "Nothing selected" : currentSelection.realm+" > ... > ...");
             load_selected_realm_image(currentSelection.realm)
         });
 
@@ -271,7 +272,7 @@
                 select(currentSelection.realm+"-"+selected);
                 set_invalid_selection();
                 document.getElementById("current-selection").innerText = currentSelection.realm+" > "+
-                    currentSelection.area+" > ...";
+                    (selected == "" ? "..." : currentSelection.area) +" > ...";
                 load_selected_area_image(currentSelection.realm, currentSelection.area);
             });
 
