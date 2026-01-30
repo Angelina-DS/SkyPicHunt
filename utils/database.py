@@ -72,7 +72,8 @@ class SupabaseManager():
                 'realm' : random_image['realm'],
                 'area' : random_image['area'],
                 'location' : random_image['location'] or '',
-                'difficulty' : random_image['difficulty']
+                'difficulty' : random_image['difficulty'],
+                'rating_count': random_image['rating_count']
             }
         
         except Exception as e :
@@ -126,7 +127,8 @@ class SupabaseManager():
                 'area' : daily_image['area'],
                 'location' : daily_image['location'] or '',
                 'difficulty' : daily_image['difficulty'],
-                'appeared' : daily_image['appeared']
+                'appeared' : daily_image['appeared'],
+                'rating_count' : daily_image['rating_count']
             }
 
         except Exception as e :
@@ -156,3 +158,17 @@ class SupabaseManager():
             print(f"Error while getting a preview image : {e}")
             raise
 
+    def add_rating(self, picture_id:int, rating:int):
+        response = self.supabase.table("Pichunt_images").select("*").eq("id", picture_id).execute()
+        if response.data:
+            rating_float = 0.25*rating-0.25
+            difficulty_before, rating_count_before=response.data[0]["difficulty"], response.data[0]["rating_count"]
+            difficulty_now = (1.0*difficulty_before*rating_count_before+rating_float)/(rating_count_before+1)
+            response = self.supabase.table("Pichunt_images").update({"difficulty":difficulty_now, "rating_count": rating_count_before+1}).eq("id", picture_id).execute()
+            if response.data:
+                print("updated ratings: "+str(response.data))
+                return True
+            else:
+                print("error: ", response)
+        else:
+            print("error: ", response)

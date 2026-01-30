@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_from_directory, current_app
 import os
 from datetime import datetime, date
 import random
@@ -34,6 +34,11 @@ if db_manager:
 game_logic = GameLogic()
 
 # -- HTML pages routes --
+
+@app.route('/favicon.ico')
+def favicon():
+    print("favicon...")
+    return send_from_directory(current_app.static_folder, "images/favicon.ico")
 
 # @app.route() decorators are used to link an URL with a Python function (called a "view")
 # Get /
@@ -288,6 +293,35 @@ def check_answer():
     
     # Return the detailed answer in the frontend
     return jsonify(response)
+
+# --- JSON API : submit rating
+@app.route('/api/submit-rating')
+def submit_rating():
+    """Read the player's answer (realm, area and location), get the current image, calculate the points"""
+    # Get player's answer via the query json, default answers = ''
+    rating = request.args.get("r", "0")
+    if not rating.isdigit() or not 1 <= int(rating) <= 5:
+        print("error: invalid rating number")
+        return jsonify({'error': 'Invalid rating number, must be int between 1 and 5'}), 400
+
+    if db_manager:
+        img = session["current_image"]
+        img_id = None
+        if img:
+            img_id = img["id"]
+        if img_id is None:
+            print("error: invalid or missing data for current img")
+            return jsonify({'error': 'Invalid or missing data for current img'}), 400
+        success = db_manager.add_rating(img_id, int(rating))
+        if success:
+            return jsonify({})
+        else:
+            print("error: something went wrong while saving the rating")
+            return jsonify({'error': 'something went wrong while saving the rating'}), 400
+    else:
+        print("error: invalid or missing database connection")
+        return jsonify({'error': 'Invalid or missing database connection'}), 400
+
 
 # --- JSON API : avalaible locations list ---
 

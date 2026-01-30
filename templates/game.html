@@ -3,14 +3,33 @@
 {% block title %}Game - Sky Geoguesser{% endblock %}
 
 {% block nav_content %}
-<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-4 h-10 p-4">
     <span class="text-white bg-white/10 px-3 py-1 rounded-full">
         Mode: {{ mode.title() }}
     </span>
-    <span class="text-white bg-white/10 px-3 py-1 rounded-full capitalize">
-        {{ difficulty }}
-    </span>
-    <span id="score-display" class="text-white bg-yellow-600 px-3 py-1 rounded-full">
+    <button id="button-change-difficulty">
+        <span class="text-white bg-white/10 px-3 py-1 rounded-full capitalize">
+            {{ difficulty }}
+        </span>
+    </button>
+    <div id="buttons-set-difficulty" class="hidden flex flex-col space-y-2 mt-10 bg-black/30 rounded-lg p-2">
+        <button onclick="window.location.href='{{ url_for('game', mode='hunt', difficulty='easy') }}'">
+            <span class="text-white bg-white/20 px-3 py-1 rounded-full capitalize">
+                Easy
+            </span>
+        </button>
+        <button onclick="window.location.href='{{ url_for('game', mode='hunt', difficulty='medium') }}'">
+            <span class="text-white bg-white/20 px-3 py-1 rounded-full capitalize">
+                Medium
+            </span>
+        </button>
+        <button onclick="window.location.href='{{ url_for('game', mode='hunt', difficulty='hard') }}'">
+            <span class="text-white bg-white/20 px-3 py-1 rounded-full capitalize">
+                Hard
+            </span>
+        </button>
+    </div>
+    <span id="score-display" class="text-white bg-yellow-600 px-3 py-1 rounded-full flex-1">
         Score: {{ session.score or 0 }}
     </span>
     <a href="{{ url_for('menu') }}" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
@@ -96,7 +115,16 @@
                     <div style="display: flex; justify-content: center; margin-top: 20px;">
                         <img id="game-image" class="w-full max-w-2xl h-auto rounded-xl shadow-2xl mb-6" alt="Image to guess">
                     </div>
-                    
+
+                    <div class="text-container text-center text-white mb-4">
+                        <p>Difficulty:</p>
+                        <div class="flex items-center justify-center space-x-4">
+                            <p>Easy</p>
+                            <span id="text-picture-difficulty" class="text-yellow-400 text-2xl"></span>
+                            <p>Hard</p>
+                        </div>
+                    </div>
+
                     <div class="text-center">
                         <div class="mb-4 text-white">
                             <p id="current-selection-title" class="text-lg">Current selection:</p>
@@ -118,9 +146,9 @@
                             <i data-lucide="play" class="w-5 h-5"></i>
                             Confirm my answer
                         </button>
-                        <div id="picture-continue" class="hidden">
+                        <div id="picture-continue" class="hidden mt-4">
                             {% if mode == 'hunt' %}
-                            <button onclick="window.location.href='{{ url_for('game', mode='hunt') }}'" class="btn-nextimage flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
+                            <button onclick="window.location.href='{{ url_for('game', mode='hunt', difficulty=difficulty) }}'" class="btn-nextimage flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
                                 Next image
                             </button>
                             {% else %}
@@ -142,10 +170,35 @@
         <div id="result-content" class="text-container text-center text-white">
             <!-- Contenu dynamique du résultat -->
         </div>
-        
+        <div class="text-container text-center text-white mt-8">
+            <p>
+                Rate the difficulty of this picture!
+            </p>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <p>
+                    Easy
+                </p>
+                {% for num in range(5) %}
+                    <button id="button-rate-{{ num+1 }}">
+                        <span class="text-yellow-400 text-2xl">
+                            &#x2606
+                        </span>
+                    </button>
+                {% endfor %}
+                <p>
+                    Hard
+                </p>
+            </div>
+            <button id="button-submit-rating" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-2 px-8 rounded-lg transition-all duration-200 gap-2 mx-auto mt-4">
+                Submit
+            </button>
+            <p id="response-submit-rating" class="hidden">
+                loading...
+            </p>
+        </div>
         <div class="flex gap-4 mt-6">
             {% if mode == 'hunt' %}
-            <button id="next-image" onclick="window.location.href='{{ url_for('game', mode='hunt') }}'" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
+            <button id="next-image" onclick="window.location.href='{{ url_for('game', mode='hunt', difficulty=difficulty) }}'" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors">
                 Next image
             </button>
             {% endif %}
@@ -171,6 +224,8 @@
         location: ''
     };
 
+    let selectedRating = null;
+    let ratingSubmitted = false;
 
     // selecting/deselecting realms/areas/locations in the sidebar
 
@@ -328,6 +383,10 @@
             let last = correct_guesses.length == 0 ? null : correct_guesses.pop();
             let guess_result = (last == null) ? "You did not guess the correct area!" : "You guessed the correct "
                 +correct_guesses.join(", ")+" and "+last+"!";
+//            let rate = "<p class=\"mt-4\">Rate the difficulty of this picture!</p><div class=\"flex items-center justify-center space-x-4\"><p>Easy</p>" {% for num in range(5) %} + "<button id=\"button-rate-{{ num+1 }}\"><span class=\"text-yellow-400 text-2xl\">\u2606</span></button>" {% endfor %} +"<p>Hard</p></div>"
+//                + "<button id=\"button-submit-rating\" class=\"hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-200 gap-2 mx-auto\">Submit</button>";
+//            let rate = "<p class=\"mt-4\">Rate the difficulty of this picture!</p><div class=\"flex items-center space-x-4\"><p>Easy</p>" {% for num in range(5) %} + "<button id=\"button-rate-{{ num+1 }} class=\"font-bold text-yellow-400 text-lg py-2 px-2 rounded-full\">\u2606</button>" {% endfor %} +"<p>Hard</p></div><span style=\"color: yellow\" class=\"text-lg\"> test... \u2605 \u2606</span>";
+            //<p class=\"mt-4\"><span style=\"color: yellow\" class=\"text-lg\"> \u2605 \u2606</span></p>";
             document.getElementById("result-content").innerHTML = "<span class=\"font-semibold text-2xl\">"+title+"</span><p class=\"font-semibold text-lg\">"+place+"</p><p>"+guess_result+"</p>";
 
             document.getElementById("current-selection-title").innerHTML = "Solution:";
@@ -343,6 +402,21 @@
         }//
     }
 
+    async function fetchRatingSubmission(){
+        if (ratingSubmitted) return;
+        const res = await fetch("/api/submit-rating?r="+selectedRating, {cache: "no-store"});
+        const result = await res.json();
+        console.log(result);
+        if (!res.ok)
+            document.getElementById("response-submit-rating").innerText = "Error: "+result.error;
+        else{
+            document.getElementById("response-submit-rating").innerText = "Your rating was saved successfully!";
+            document.getElementById("button-submit-rating").classList.add("hidden");
+            ratingSubmitted=true;
+        }
+        document.getElementById("response-submit-rating").classList.remove("hidden");
+    }
+
     // Submission button
     document.getElementById("submit-answer").addEventListener("click", () => {
         fetchSubmission();
@@ -353,6 +427,33 @@
         document.getElementById("result-modal").classList.add("hidden");
     });
 
+    // Change difficulty button
+    document.getElementById("button-change-difficulty").addEventListener("click", () => {
+        document.getElementById("button-change-difficulty").classList.add("hidden");
+        document.getElementById("buttons-set-difficulty").classList.remove("hidden");
+    });
+
+    // Rating buttons
+    {% for num in range(5) %}
+    document.getElementById("button-rate-{{ num+1 }}").addEventListener("click", () => {
+        if (ratingSubmitted) return;
+        selectedRating = {{ num+1 }};
+        console.log("rating button {{ num+1 }} pressed!");
+        for (let i=0; i<5; i++){
+            let span = document.getElementById("button-rate-"+(i+1)).querySelector('span');
+            if (span != null) span.textContent = (i<={{ num }} ? "\u2605" : "\u2606");
+        }
+        document.getElementById("button-submit-rating").classList.remove("hidden");
+    });
+    {% endfor %}
+
+
+    // Submission button
+    document.getElementById("button-submit-rating").addEventListener("click", () => {
+        fetchRatingSubmission();
+    });
+
+
     // Charger la première image
 //    window.addEventListener('DOMContentLoaded', function() {
 //        loadNewImage();
@@ -362,7 +463,7 @@
     let image_url = "{{ mode }}"=="daily" ? "/api/daily-image" : "/api/new-image?difficulty={{ difficulty }}";
 
     window.addEventListener("DOMContentLoaded", () => {
-        loadImageFromJson(image_url, "#game-image", "url");
+        loadImageFromJson(image_url, "#game-image", "url", false, "text-picture-difficulty");
         const loading = document.getElementById("loading-spinner");
         const img = document.getElementById("image-display");
         loading.classList.toggle("hidden");

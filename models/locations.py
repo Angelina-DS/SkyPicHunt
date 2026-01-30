@@ -3,17 +3,66 @@
 # Areas and locations are put in the order in which they are found when exploring the realm
 
 locations = {
-    "Old Home" : {},
+    "Old Home" : {
+        "Old Home": {
+            "Closet",
+            "Eden Portal",
+            "Portals",
+            "Spell Boat"
+        }
+    },
     "Aviary" : {
-        "Aviary Village" : {},
-        "Duets Season Area" : {},
-        "Spell Shop" : {},
-        "Nesting Shop" : {},
-        "Dye Shop" : {},
-        "Coffee Shop" : {},
-        "Meditation Room" : {},
-        "Cinnamoroll Cafe" : {}, # IAP restricted area
-        "Wonderland Cafe" : {} # IAP restricted area
+        "Aviary Village" : {
+            "Entrance",
+            "Tower",
+            "Village Square",
+            "Shops Left",
+            "Shops Right and Coffee Shop Outside",
+            "Portals",
+            "Grass Hills",
+            "Eden Portal",
+            "Wind Paths Entrance"
+        },
+        "Duets Season Area" : {
+            "Backstage Area",
+            "Crab Cave",
+            "Entrance Cave",
+            "Main Hall",
+            "Mannequins",
+            "Water Cave"
+        },
+        "Spell Shop" : {
+            "Ground Floor",
+            "Pond",
+            "Upper Floor"
+        },
+        "Nesting Shop" : {
+            "Counter",
+            "Prop Display",
+            "Shared Space Area"
+        },
+        "Dye Shop" : {
+            "Dye Shop Cave",
+            "Dye Shop Ground Floor and Preview",
+            "Dye Shop Upper Floor",
+            "Hair Shop",
+            "Hat Shop",
+            "Mask Shop",
+            "Pants and Cape Shop"
+        },
+        "Coffee Shop" : {
+            "Counter",
+            "Oven",
+            "Tables"
+        },
+        "Meditation Area" : {
+            "Labyrinth",
+            "Meditation Place",
+            "Path",
+            "Pond"
+        },
+#        "Cinnamoroll Cafe" : {}, # IAP restricted area
+#        "Wonderland Cafe" : {} # IAP restricted area
     },
     "Isle of Dawn" : {
         "Main Isle" : {

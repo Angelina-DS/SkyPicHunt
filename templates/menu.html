@@ -16,6 +16,16 @@
             <div id="image-display" class="hidden">
                 <img id="game-image" class="w-full max-w-2xl h-auto rounded-xl shadow-2xl mb-6" style="max-height: 300px; width: auto; height: 100%; object-fit:contain;" alt="Image to guess">
             </div>
+
+            <div class="text-container text-center text-white mt-4">
+                <p>Difficulty:</p>
+                <div class="flex items-center justify-center space-x-4">
+                    <p>Easy</p>
+                    <span id="text-picture-difficulty" class="text-yellow-400 text-2xl"></span>
+                    <p>Hard</p>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="center-column flex justify-center">
@@ -44,7 +54,7 @@
     let image_url = "/api/daily-image";
 
     window.addEventListener("DOMContentLoaded", () => {
-        loadImageFromJson(image_url, "#game-image", "url");
+        loadImageFromJson(image_url, "#game-image", "url", false, "text-picture-difficulty");
         const loading = document.getElementById("loading-spinner");
         const img = document.getElementById("image-display");
         loading.classList.toggle("hidden");
