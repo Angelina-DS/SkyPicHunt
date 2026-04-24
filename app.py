@@ -241,6 +241,35 @@ def get_preview_image():
     return jsonify(image_data)
 
 
+# Get /api/new-image
+@app.route('/api/overview-image')
+def get_overview_image():
+    """API to select a new image according to the difficulty"""
+    realm = request.args.get('realm', "")
+    area = request.args.get('area', "")
+    if realm=="" or area == "":
+        return jsonify({"error": "Not enough arguments provided: '"+realm+"' > '"+area+"'"}), 404
+
+
+    # Prod case : if Supabase is avalaible
+    if db_manager:
+        # We request an image adapted to the difficulty
+        image_data = db_manager.get_overview_image(realm, area)
+
+        # If no image exist for the selected difficulty
+        if not image_data:
+            return jsonify({
+                'error': f'No image found for the overview of: "{realm}" > "{area}"'
+            }), 404
+    else:
+        return jsonify({
+            'error': f'No database connection available'
+        }), 404
+
+    # Return the image on the frontend (JSON)
+    return jsonify(image_data)
+
+
 # --- JSON API : check the players' answer ---
 
 # POST /api/check-answer

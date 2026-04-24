@@ -77,8 +77,8 @@
                             </button>
                             
                             <!-- Locations sous cette area (plus simple !) -->
+<!--                            <div id="selection-{{ realm }}-{{ area }}" class="area-locations ml-4 mt-1 space-y-1 hidden">
                             {% if locations_list %}
-                            <div id="selection-{{ realm }}-{{ area }}" class="area-locations ml-4 mt-1 space-y-1 hidden">
                                 {% for location in locations_list %}
                                 <button 
                                     id="button-{{ realm }}-{{ area }}-{{ location }}"
@@ -91,7 +91,7 @@
                                 </button>
                                 {% endfor %}
                             </div>
-                            {% endif %}
+                            {% endif %} -->
                         </div>
                         {% endfor %}
                     </div>
@@ -127,7 +127,7 @@
 
                     <div class="text-center">
                         <div class="mb-4 text-white">
-                            <p id="current-selection-title" class="text-lg">Current selection:</p>
+                            <p id="current-selection-title" class="text-lg">Current area selection:</p>
                             <p id="current-selection" class="text-blue-200">
                                 Nothing selected
                             </p>
@@ -135,9 +135,43 @@
                         <div class="flex flex-row" style="gap: 20px; max-height: 200px; justify-content: center; text-align:center; margin: 0 auto; overflow: hidden;">
                             <img id="select-realm-image" class="mb-4 rounded-xl shadow-2xl mb-6 hidden" style="max-height: 200px; width: auto; height: 100%; object-fit:contain;">
                             <img id="select-area-image" class="mb-4 rounded-xl shadow-2xl mb-6 hidden" style="max-height: 200px; width: auto; height: 100%; object-fit:contain;">
-                            <img id="select-location-image" class="mb-4 rounded-xl shadow-2xl mb-6 hidden" style="max-height: 200px; width: auto; height: 100%; object-fit:contain;">
+<!--                            <img id="select-location-image" class="mb-4 rounded-xl shadow-2xl mb-6 hidden" style="max-height: 200px; width: auto; height: 100%; object-fit:contain;"> -->
                         </div>
-                        <button 
+                        <!-- todo -->
+                        <div class="flex flex-row" style="gap: 20px; max-height: 500px; justify-content: center; text-align:center; margin: 0 auto; overflow: hidden; margin-top: 20px;">
+                            <img id="area-overview-image" class="mb-4 rounded-xl shadow-2xl mb-6 hidden" style="max-height: 500px; width: auto; height: 100%; object-fit:contain;">
+                        </div>
+                        <div class="flex flex-row" style="gap: 20px; max-height: 500px; justify-content: center; text-align:center; margin: 0 auto; overflow: hidden; margin-top: 20px;">
+                            <div id="location-selection" class="hidden w-80 bg-black/30 backdrop-blur-sm border-l border-r border-white/10 overflow-y-auto rounded-xl" style="justify-content: center; margin-top: 20px;">
+                                <div class="p-6 border-b border-white/10">
+                                    <p class="text-blue-200 text-sm">Select the specific location in the area</p>
+                                </div>
+                                <div class="mb-2">
+                                    {% for realm, areas in locations.items() %}
+                                    {% for area, locations_list in areas.items() %}
+                                    {% if locations_list %}
+                                    <div id="selection-{{ realm }}-{{ area }}" class="area-locations ml-4 mr-4 mt-1 space-y-1 hidden">
+                                        {% for location in locations_list %}
+                                        <button
+                                            id="button-{{ realm }}-{{ area }}-{{ location }}"
+                                            class="location-btn w-full p-2 rounded transition-colors text-left text-xs bg-white/5 hover:bg-white/10 text-gray-50"
+                                            data-realm="{{ realm }}"
+                                            data-area="{{ area }}"
+                                            data-location="{{ location }}"
+                                        >
+                                            {{ location }}
+                                        </button>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <button
                             id="submit-answer"
                             disabled
                             class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 mx-auto disabled:cursor-not-allowed"
@@ -227,9 +261,9 @@
     let selectedRating = null;
     let ratingSubmitted = false;
 
-    // selecting/deselecting realms/areas/locations in the sidebar
+    // selecting/deselecting realms/areas in the sidebar
 
-    function select(place){ //place is realm or realm-area or realm-area-location
+    function select(place){ //place is realm or realm-area
         if (place == "") return;
         //show area select
         const area_select = document.getElementById("selection-"+place);
@@ -262,16 +296,15 @@
         }
     }
 
-    //changing submission button
+    //changing submission button // todo
     function set_valid_selection(){
         document.getElementById("current-selection").innerText = currentSelection.realm+" > "+
-            currentSelection.area+" > "+currentSelection.location;
+            currentSelection.area;
         document.getElementById("submit-answer").removeAttribute("disabled");
     }
     function set_invalid_selection(){
         document.getElementById("current-selection").innerText = (currentSelection.realm == "" ? "Nothing selected" :
-            currentSelection.realm+" > "+(currentSelection.area == "" ? "..." : currentSelection.area)+" > "+
-            (currentSelection.location == "" ? "..." : currentSelection.location));
+            currentSelection.realm+" > "+(currentSelection.area == "" ? "..." : currentSelection.area));
         document.getElementById("submit-answer").setAttribute("disabled", true);
     }
 
@@ -288,12 +321,12 @@
         loadImageFromJson(image_url, "#select-area-image", "url", true);
         document.getElementById("select-area-image").classList.remove("hidden");
     }
-    function load_selected_location_image(realm_name, area_name, location_name){
-        if (location_name == "") return document.getElementById("select-location-image").classList.add("hidden");
-        let image_url="/api/preview-image?type=location&realm="+realm_name+"&area="+area_name+"&location="+location_name;
-//        let image_url="/api/daily-image";
-        loadImageFromJson(image_url, "#select-location-image", "url", true);
-        document.getElementById("select-location-image").classList.remove("hidden");
+
+    function load_selected_area_overview_image(realm_name, area_name){
+        if (area_name == "") return document.getElementById("area-overview-image").classList.add("hidden");
+        let image_url="/api/overview-image?realm="+realm_name+"&area="+area_name;
+        loadImageFromJson(image_url, "#area-overview-image", "url", true);
+        document.getElementById("area-overview-image").classList.remove("hidden");
     }
 
     //Button handlers for sidebar
@@ -303,33 +336,39 @@
             if (selected == currentSelection.realm) selected = "";
             unselect(currentSelection.realm);
             unselect(currentSelection.realm+"-"+currentSelection.area);
-            unselect(currentSelection.realm+"-"+currentSelection.area+"-"+currentSelection.location);
+            document.getElementById("location-selection").classList.add("hidden");
             load_selected_area_image(currentSelection.realm, "");
-            load_selected_location_image(currentSelection.realm, currentSelection.area, "");
+            load_selected_area_overview_image(currentSelection.realm, "");
             currentSelection.realm = selected;
             currentSelection.area = "";
             currentSelection.location = "";
             select(selected);
             set_invalid_selection();
-            document.getElementById("current-selection").innerText = (selected == "" ? "Nothing selected" : currentSelection.realm+" > ... > ...");
+            document.getElementById("current-selection").innerText = (selected == "" ? "Nothing selected" : currentSelection.realm+" > ...");
             load_selected_realm_image(currentSelection.realm)
         });
 
         {% for area, locations in areas.items() %}
             document.getElementById("button-{{ realm }}-{{ area }}").addEventListener("click", () => {
                 let selected = "{{ area }}";
-                if (selected == currentSelection.area) selected = "";
+                if (selected == currentSelection.area){
+                    selected = "";
+                    document.getElementById("location-selection").classList.add("hidden");
+                } else {
+                    document.getElementById("location-selection").classList.remove("hidden");
+                }
                 unselect(currentSelection.realm+"-"+currentSelection.area);
-                unselect(currentSelection.realm+"-"+currentSelection.area+"-"+currentSelection.location);
-                load_selected_location_image(currentSelection.realm, currentSelection.area, "");
+//todo change to overview                load_selected_location_image(currentSelection.realm, currentSelection.area, "");
                 currentSelection.area = selected;
                 currentSelection.location = "";
                 select(currentSelection.realm+"-"+selected);
                 set_invalid_selection();
                 document.getElementById("current-selection").innerText = currentSelection.realm+" > "+
-                    (selected == "" ? "..." : currentSelection.area) +" > ...";
+                    (selected == "" ? "..." : currentSelection.area);
                 load_selected_area_image(currentSelection.realm, currentSelection.area);
+                load_selected_area_overview_image(currentSelection.realm, currentSelection.area);
             });
+
 
             {% for location in locations %}
                 document.getElementById("button-{{ realm }}-{{ area }}-{{ location }}").addEventListener("click", () => {
@@ -342,9 +381,9 @@
                         set_valid_selection();
                     else
                         set_invalid_selection();
-                    load_selected_location_image(currentSelection.realm, currentSelection.area, currentSelection.location);
                 });
             {% endfor %}
+
         {% endfor %}
     {% endfor %}
 

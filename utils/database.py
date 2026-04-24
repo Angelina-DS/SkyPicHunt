@@ -172,3 +172,21 @@ class SupabaseManager():
                 print("error: ", response)
         else:
             print("error: ", response)
+
+
+    def get_overview_image(self, realm:str, area:str) -> dict|None:
+        try:
+            print("get preview image for:", realm, ",", area)
+            query = self.supabase.table("Overview_images").select("*").eq("realm", realm).eq("area", area)
+            response = query.execute()
+            print("response: ", response, "data:", response.data)
+            if response.data:
+                return {
+                    "id": response.data[0]["id"],
+                    "url": response.data[0]["URL"],
+                    "realm": response.data[0]["realm"],
+                    "area": response.data[0]["area"],
+                }
+        except Exception as e:
+            print(f"Error while getting a preview image : {e}")
+            raise
