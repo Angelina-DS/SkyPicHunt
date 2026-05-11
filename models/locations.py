@@ -5,71 +5,71 @@
 locations = {
     "Old Home" : {
         "Old Home": {
-            "Closet",
-            "Eden Portal",
-            "Portals",
-            "Spell Boat"
+            1: "Closet",
+            2: "Eden Portal",
+            3: "Portals",
+            4: "Spell Boat"
         }
     },
     "Aviary" : {
         "Aviary Village" : {
-            "Entrance",
-            "Tower",
-            "Village Square",
-            "Shops Left",
-            "Shops Right and Coffee Shop Outside",
-            "Portals",
-            "Grass Hills",
-            "Eden Portal",
-            "Wind Paths Entrance"
+            1: "Entrance",
+            2: "Tower",
+            3: "Village Square",
+            4: "Shops Left",
+            5: "Shops Right and Coffee Shop Outside",
+            6: "Portals",
+            7: "Grass Hills",
+            8: "Eden Portal",
+            9: "Wind Paths Entrance"
         },
         "Duets Season Area" : {
-            "Backstage Area",
-            "Crab Cave",
-            "Entrance Cave",
-            "Main Hall",
-            "Mannequins",
-            "Water Cave"
+            1: "Backstage Area",
+            2: "Crab Cave",
+            3: "Entrance Cave",
+            4: "Main Hall",
+            5: "Mannequins",
+            6: "Water Cave"
         },
         "Spell Shop" : {
-            "Ground Floor",
-            "Pond",
-            "Upper Floor"
+            1: "Ground Floor",
+            2: "Pond",
+            3: "Upper Floor"
         },
         "Nesting Shop" : {
-            "Counter",
-            "Prop Display",
-            "Shared Space Area"
+            1: "Counter",
+            2: "Prop Display",
+            3: "Shared Space Area"
         },
         "Dye Shop" : {
-            "Dye Shop Cave",
-            "Dye Shop Ground Floor and Preview",
-            "Dye Shop Upper Floor",
-            "Hair Shop",
-            "Hat Shop",
-            "Mask Shop",
-            "Pants and Cape Shop"
+            1: "Dye Shop Cave",
+            2: "Dye Shop Ground Floor and Preview",
+            3: "Dye Shop Upper Floor",
+            4: "Hair Shop",
+            5: "Hat Shop",
+            6: "Mask Shop",
+            7: "Pants and Cape Shop"
         },
         "Coffee Shop" : {
-            "Counter",
-            "Oven",
-            "Tables"
+            1: "Counter",
+            2: "Oven",
+            3: "Tables"
         },
         "Meditation Area" : {
-            "Labyrinth",
-            "Meditation Place",
-            "Path",
-            "Pond"
+            1: "Labyrinth",
+            2: "Meditation Place",
+            3: "Path",
+            4: "Pond"
         },
 #        "Cinnamoroll Cafe" : {}, # IAP restricted area
 #        "Wonderland Cafe" : {} # IAP restricted area
     },
     "Isle of Dawn" : {
         "Main Isle" : {
-            "Mural Cave",
-            "Sand Dunes",
-            "Passage Stone",
-            "Piggyback Lightseeker Cave"
+            1: "Mural Cave",
+            2: "Sand Dunes",
+            3: "Passage Stone",
+            4: "Piggyback Lightseeker Cave"
         },
         "Isle Temple" : {},
         "Butterfly Cave" : {},
@@ -93,13 +93,13 @@ locations = {
     "Hidden Forest" : {
         "Social Space" : {},
         "Wind Paths" : {
-            "Islands",
-            "Wind tunnels"
+            1: "Islands",
+            2: "Wind tunnels"
         },
         "Forest Clearing" : {
-            "First Gate Plain",
-            "Second Gate Courtyard",
-            "Third Gate Assembly Shelter"
+            1: "First Gate Plain",
+            2: "Second Gate Courtyard",
+            3: "Third Gate Assembly Shelter"
         },
         "Treehouse" : {},
         "Forest Brook" : {},
@@ -117,15 +117,15 @@ locations = {
         "Sliding Race" : {},
         "Citadel" : {},
         "Flying Race" : {
-            "Meditation Room",
-            "First Part",
-            "Second Part"
+            1: "Meditation Room",
+            2: "First Part",
+            3: "Second Part"
         },
         "Coliseum" : {},
         "Valley Temple" : {
-            "Main Room",
-            "Temple Maze",
-            "After Temple"
+            1: "Main Room",
+            2: "Temple Maze",
+            3: "After Temple"
         },
         "Village of Dreams" : {},
         "Theater" : {},
@@ -140,8 +140,8 @@ locations = {
         "Broken Temple" : {},
         "Forgotten Ark" : {},
         "Graveyard" : {
-            "Graveyard Entrance",
-            "Graveyard"
+            1: "Graveyard Entrance",
+            2: "Graveyard"
         },
         "Crab Fields" : {},
         "Battlefield" : {},
@@ -162,10 +162,10 @@ locations = {
         "Collaboration Room" : {},
         "Crescent Oasis" : {},
         "Starlight Desert" : {
-            "Main Desert",
-            "Jellyfish Cove",
-            "Slouching Soldier Jar",
-            "Memorial"
+            1: "Main Desert",
+            2: "Jellyfish Cove",
+            3: "Slouching Soldier Jar",
+            4: "Memorial"
         },
         "Moomin Valley" : {},
         "Moomin House" : {}, # IAP restricted area

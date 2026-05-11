@@ -72,7 +72,8 @@ class GameLogic:
         
         # Checking if a location is given
         if location:
-            possible_locations = locations[realm][area] # List of the possible locations for this area
+#            possible_locations = locations[realm][area] # List of the possible locations for this area
+            possible_locations = list(zip(*locations[realm][area].items()))[1] # List of the possible locations for this area
             if location not in possible_locations:
                 return {'valid': False, 'error': 'Invalid location for this area.'}
         else:
